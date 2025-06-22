@@ -1,4 +1,13 @@
 ## Hi there 👋
+I am a new software engineer graduating in July 2025
+Graduated from APU, Malaysia
+Currently living in Male', Maldives
+
+![](https://komarev.com/ghpvc/?username=your-github-username)      
+
+I'm currently working on a data website
+I'm currently learning React framework and Typescript
+You can reach me on :aishathshafaofficial@gmail.com
 
 <!--
 **AishShafa/AishShafa** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
