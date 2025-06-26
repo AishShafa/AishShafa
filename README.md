@@ -1,6 +1,6 @@
 ## Hi there 👋
 - I am a new software engineer graduating in July 2025
-- Graduated from APU, Malaysia + De Montfort University (DMU), UK
+- Graduated from APU, Malaysia + De Montfort University (DMU), UK : Bachelor of Science (Hons) in Software Engineering
 - Currently living in Male', Maldives
 
 ![](https://komarev.com/ghpvc/?username=your-github-username)      
