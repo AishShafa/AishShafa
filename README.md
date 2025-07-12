@@ -10,7 +10,7 @@
 
 ![](https://komarev.com/ghpvc/?username=your-github-username)      
 
-- I'm currently working on a data website, my own portfolio and a static website for an upcoming company.
+- I'm currently working on a data website and my own portfolio.
 - You can reach me on :aishathshafaofficial@gmail.com
 
 <!--
