@@ -1,12 +1,16 @@
 ## Hi there 👋
 - I am a new software engineer graduating in July 2025
-- Graduated from APU, Malaysia + De Montfort University (DMU), UK : Bachelor of Science (Hons) in Software Engineering
+  
+- Graduated from
+      Asia Pacific University of Technology & Innovation (APU), Malaysia
+      Malaysia + De Montfort University (DMU), UK
+  with a Bachelor of Science (Hons) in Software Engineering
+  
 - Currently living in Male', Maldives
 
 ![](https://komarev.com/ghpvc/?username=your-github-username)      
 
-- I'm currently working on a data website
-- I'm currently learning React framework and Typescript
+- I'm currently working on a data website, my own portfolio and a static website for an upcoming company.
 - You can reach me on :aishathshafaofficial@gmail.com
 
 <!--
