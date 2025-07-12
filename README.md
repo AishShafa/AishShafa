@@ -2,9 +2,9 @@
 - I am a new software engineer graduating in July 2025
   
 - Graduated from
-      Asia Pacific University of Technology & Innovation (APU), Malaysia
-      Malaysia + De Montfort University (DMU), UK
-  with a Bachelor of Science (Hons) in Software Engineering
+      + Asia Pacific University of Technology & Innovation (APU), Malaysia
+      + De Montfort University (DMU), UK
+  = with a Bachelor of Science (Hons) in Software Engineering
   
 - Currently living in Male', Maldives
 
