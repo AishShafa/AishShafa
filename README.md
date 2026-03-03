@@ -1,5 +1,5 @@
 ## Hi there 👋
-- I am a new software engineer graduating in July 2025
+- I am a software engineer 
   
 - Graduated from
       + Asia Pacific University of Technology & Innovation (APU), Malaysia
@@ -10,7 +10,7 @@
 
 ![](https://komarev.com/ghpvc/?username=your-github-username)      
 
-- I'm currently working on a data website and my own portfolio.
+- I'm currently working on a travel website.
 - You can reach me on :aishathshafaofficial@gmail.com
 
 <!--
