@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zoom Travels — Flights at Great Prices</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --sky-top:    #87ceeb;
+      --sky-mid:    #b7dfed;
+      --sky-pale:   #e0f2fe;
+      --sky-white:  #f0f9ff;
+      --blue:       #0ea5e9;
+      --blue-dark:  #0369a1;
+      --navy:       #0f172a;
+      --navy-mid:   #1e3a5f;
+      --text:       #1e293b;
+      --text-light: #64748b;
+      --white:      #ffffff;
+      --off-white:  #f8fafc;
+      --border:     #e2e8f0;
+      --green:      #25D366;
+      --green-dark: #128C7E;
+      --font-disp:  'Playfair Display', serif;
+      --font-body:  'Inter', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--white);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-weight: 400;
+      overflow-x: hidden;
+    }
+
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: var(--off-white); }
+    ::-webkit-scrollbar-thumb { background: var(--blue); border-radius: 2px; }
+
+    /* ─── LOADER ─── */
+    #loader {
+      position: fixed; inset: 0; z-index: 9999;
+      background: white;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;
+      transition: opacity .6s ease, visibility .6s ease;
+    }
+    #loader.hide { opacity: 0; visibility: hidden; }
+    .loader-logo {
+      font-family: var(--font-disp); font-size: 2.4rem; font-weight: 700; color: var(--navy);
+    }
+    .loader-logo span { color: var(--blue); }
+    .loader-bar { width: 160px; height: 2px; background: var(--border); border-radius: 2px; overflow: hidden; }
+    .loader-fill {
+      height: 100%;
+      background: linear-gradient(to right, var(--blue), var(--green));
+      animation: loader-slide 1.6s ease forwards;
+    }
+    @keyframes loader-slide { from { width: 0; } to { width: 100%; } }
+    .loader-text { font-size: .62rem; letter-spacing: .2em; text-transform: uppercase; color: var(--text-light); }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 22px 48px;
+      transition: background .4s ease, padding .4s ease, box-shadow .4s ease;
+    }
+    nav.scrolled {
+      background: rgba(255,255,255,.94);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 14px 48px;
+      box-shadow: 0 1px 24px rgba(15,23,42,.08);
+    }
+    .nav-logo { font-family: var(--font-disp); font-size: 1.5rem; font-weight: 700; color: var(--navy); text-decoration: none; }
+    .nav-logo span { color: var(--blue); }
+    .nav-links { display: flex; align-items: center; gap: 36px; }
+    .nav-links a { font-size: .78rem; font-weight: 500; color: var(--navy); text-decoration: none; letter-spacing: .03em; transition: color .25s; }
+    .nav-links a:hover { color: var(--blue); }
+    .nav-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--green); color: white;
+      font-size: .72rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+      text-decoration: none; padding: 10px 22px; border-radius: 6px;
+      transition: background .25s, transform .2s;
+    }
+    .nav-btn:hover { background: var(--green-dark); transform: translateY(-1px); }
+    .nav-btn svg { width: 16px; height: 16px; fill: white; }
+
+    /* ─── HERO ─── */
+    .hero-wrapper { height: 300vh; position: relative; }
+    #hero {
+      position: sticky; top: 0; height: 100vh; width: 100%;
+      overflow: hidden; display: flex; align-items: center; justify-content: center;
+    }
+    .hero-sky {
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, #87ceeb 0%, #b7dfed 35%, #e0f2fe 65%, #f8fafc 100%);
+    }
+    .hero-sun {
+      position: absolute; top: 10%; right: 14%;
+      width: 110px; height: 110px; border-radius: 50%;
+      background: radial-gradient(circle, #fffde7 30%, #fff9c4 60%, rgba(255,249,196,0) 100%);
+      box-shadow: 0 0 60px 30px rgba(255,249,196,.55), 0 0 120px 60px rgba(255,236,64,.18);
+      will-change: transform;
+    }
+    /* Cloud containers */
+    .cloud-layer { position: absolute; inset: 0; pointer-events: none; will-change: transform; }
+    .cloud-svg { position: absolute; }
+
+    /* Horizon gradient */
+    .hero-horizon {
+      position: absolute; bottom: 0; left: 0; right: 0; height: 32%;
+      background: linear-gradient(to top, rgba(248,250,252,1) 0%, rgba(248,250,252,.6) 45%, transparent 100%);
+    }
+
+    /* Airplane */
+    .hero-plane {
+      position: absolute; will-change: transform; pointer-events: none; z-index: 10;
+    }
+    .hero-plane svg { width: 150px; height: auto; filter: drop-shadow(0 8px 20px rgba(15,23,42,.18)); }
+
+    /* Hero content */
+    .hero-content {
+      position: relative; z-index: 5; text-align: center; padding: 0 24px;
+      will-change: opacity, transform;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,.88); backdrop-filter: blur(8px);
+      border: 1px solid rgba(14,165,233,.22); border-radius: 100px;
+      padding: 6px 18px; font-size: .68rem; font-weight: 600;
+      color: var(--blue-dark); letter-spacing: .1em; text-transform: uppercase;
+      margin-bottom: 22px;
+      opacity: 0; animation: fade-up .6s .35s ease forwards;
+    }
+    .hero-badge::before {
+      content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--blue);
+      animation: blink 1.4s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100% { opacity: .35; } 50% { opacity: 1; } }
+    .hero-title {
+      font-family: var(--font-disp); font-size: clamp(3.2rem, 9vw, 7.5rem);
+      font-weight: 900; line-height: .95; letter-spacing: -.02em; color: var(--navy);
+      opacity: 0; animation: fade-up .9s .55s ease forwards;
+    }
+    .hero-title .hi { color: var(--blue); font-style: italic; }
+    .hero-sub {
+      margin-top: 18px; font-size: clamp(.85rem, 1.6vw, 1.05rem);
+      font-weight: 400; line-height: 1.65; color: var(--navy-mid);
+      max-width: 480px; margin-left: auto; margin-right: auto;
+      opacity: 0; animation: fade-up .8s .8s ease forwards;
+    }
+    .hero-actions {
+      margin-top: 32px; display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap;
+      opacity: 0; animation: fade-up .8s 1.05s ease forwards;
+    }
+    .btn-wa {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--green); color: white;
+      font-size: .78rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+      text-decoration: none; padding: 15px 34px; border-radius: 6px;
+      box-shadow: 0 4px 22px rgba(37,211,102,.35);
+      transition: background .25s, transform .2s, box-shadow .25s;
+    }
+    .btn-wa:hover { background: var(--green-dark); transform: translateY(-2px); box-shadow: 0 10px 32px rgba(37,211,102,.45); }
+    .btn-wa svg { width: 20px; height: 20px; fill: white; }
+    .btn-learn {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--navy); font-size: .78rem; font-weight: 500;
+      text-decoration: none; padding: 15px 24px;
+      border: 1px solid rgba(15,23,42,.16); border-radius: 6px;
+      background: rgba(255,255,255,.75); backdrop-filter: blur(8px);
+      transition: border-color .25s, color .25s, transform .2s;
+    }
+    .btn-learn:hover { border-color: var(--blue); color: var(--blue); transform: translateY(-2px); }
+
+    /* Scroll indicator */
+    .scroll-hint {
+      position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      opacity: 0; animation: fade-in 1s 2s ease forwards;
+    }
+    .scroll-hint span { font-size: .58rem; letter-spacing: .35em; text-transform: uppercase; color: var(--text-light); }
+    .scroll-mouse {
+      width: 22px; height: 34px; border: 2px solid var(--text-light);
+      border-radius: 12px; display: flex; justify-content: center; padding-top: 5px;
+    }
+    .scroll-mouse::after {
+      content: ''; width: 3px; height: 8px; background: var(--blue); border-radius: 2px;
+      animation: scroll-bounce 1.8s ease-in-out infinite;
+    }
+    @keyframes scroll-bounce { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(10px); opacity: 0; } }
+
+    /* ─── INTRO ─── */
+    #intro { position: relative; padding: 110px 48px; background: var(--white); overflow: hidden; }
+    .intro-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+    }
+    .section-tag {
+      font-size: .62rem; font-weight: 600; letter-spacing: .22em; text-transform: uppercase;
+      color: var(--blue); margin-bottom: 14px; display: flex; align-items: center; gap: 10px;
+    }
+    .section-tag::before { content: ''; width: 22px; height: 2px; background: var(--blue); flex-shrink: 0; }
+    .section-title {
+      font-family: var(--font-disp); font-size: clamp(1.9rem, 3.5vw, 3rem);
+      font-weight: 700; line-height: 1.18; color: var(--navy);
+    }
+    .section-title em { font-style: italic; color: var(--blue); }
+    .intro-body { margin-top: 18px; font-size: .88rem; line-height: 1.85; color: var(--text-light); }
+    .intro-stats { margin-top: 36px; display: flex; gap: 20px; flex-wrap: wrap; }
+    .stat-box {
+      padding: 18px 24px; background: var(--off-white); border-radius: 8px;
+      border-left: 3px solid var(--blue);
+    }
+    .stat-num { font-family: var(--font-disp); font-size: 2rem; font-weight: 700; color: var(--navy); line-height: 1; }
+    .stat-label { font-size: .68rem; font-weight: 500; color: var(--text-light); letter-spacing: .08em; margin-top: 4px; }
+
+    /* Airplane window illustration */
+    .intro-right { position: relative; }
+    .window-wrap {
+      max-width: 360px; margin: 0 auto; position: relative;
+    }
+    .window-frame {
+      width: 100%; aspect-ratio: 3/4;
+      border-radius: 42% 42% 18px 18px / 32% 32% 18px 18px;
+      overflow: hidden; position: relative;
+      box-shadow: 0 30px 80px rgba(15,23,42,.14);
+      border: 5px solid rgba(15,23,42,.07);
+    }
+    .window-scene {
+      position: absolute; inset: -15%; will-change: transform;
+      background: linear-gradient(160deg, #87ceeb 0%, #3b82f6 40%, #1e3a5f 100%);
+    }
+    .win-cloud {
+      position: absolute; border-radius: 50px;
+      background: rgba(255,255,255,.65); filter: blur(6px);
+    }
+    .win-cloud-1 { width: 120px; height: 30px; top: 28%; left: 5%; }
+    .win-cloud-2 { width: 80px; height: 22px; top: 45%; left: 55%; }
+    .win-cloud-3 { width: 60px; height: 16px; top: 20%; left: 60%; }
+    .win-city {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: linear-gradient(to top, #0f172a 0%, rgba(15,23,42,.5) 50%, transparent 100%);
+    }
+    .win-caption {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 24px 20px;
+      font-family: var(--font-disp); font-size: 1.2rem; font-weight: 700;
+      color: white; text-align: center;
+    }
+    .win-caption small { display: block; font-size: .65rem; font-weight: 400; letter-spacing: .15em; text-transform: uppercase; opacity: .65; margin-bottom: 6px; font-family: var(--font-body); }
+    .window-frame-deco {
+      position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
+      width: 60px; height: 28px;
+      background: rgba(15,23,42,.07); border-radius: 8px 8px 0 0;
+    }
+
+    /* ─── DESTINATIONS ─── */
+    #destinations { padding: 110px 0; background: var(--off-white); overflow: hidden; }
+    .dest-header { padding: 0 48px 56px; max-width: 1100px; margin: 0 auto; }
+    .dest-title-row { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+    .dest-count { font-size: .72rem; font-weight: 500; color: var(--text-light); letter-spacing: .1em; }
+    .dest-grid {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      grid-template-rows: auto; gap: 18px;
+      padding: 0 48px; max-width: 1100px; margin: 0 auto;
+    }
+    .dest-card {
+      position: relative; overflow: hidden; border-radius: 14px; cursor: pointer;
+      will-change: transform;
+      box-shadow: 0 4px 24px rgba(15,23,42,.1);
+      transition: box-shadow .35s ease;
+    }
+    .dest-card:hover { box-shadow: 0 12px 40px rgba(15,23,42,.18); }
+    .dest-card--large { grid-row: span 2; }
+    .dest-card-inner { position: relative; width: 100%; height: 100%; min-height: 260px; }
+    .dest-card--large .dest-card-inner { min-height: 538px; }
+    .dest-bg-wrap { position: absolute; inset: -18%; will-change: transform; }
+    .dest-bg-scene { width: 100%; height: 100%; }
+    /* destination sky art */
+    .art-maldives { background: linear-gradient(160deg, #87ceeb 0%, #06b6d4 35%, #0891b2 60%, #065f46 100%); }
+    .art-dubai    { background: linear-gradient(160deg, #fef3c7 0%, #fbbf24 35%, #d97706 60%, #78350f 100%); }
+    .art-singapore{ background: linear-gradient(160deg, #ecfdf5 0%, #6ee7b7 35%, #059669 60%, #064e3b 100%); }
+    .art-paris    { background: linear-gradient(160deg, #fdf4ff 0%, #c084fc 35%, #9333ea 60%, #3b0764 100%); }
+    .art-tokyo    { background: linear-gradient(160deg, #fff1f2 0%, #fda4af 35%, #e11d48 60%, #4c0519 100%); }
+    .dest-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(15,23,42,.88) 0%, rgba(15,23,42,.25) 55%, transparent 100%);
+    }
+    .dest-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 24px 20px; z-index: 2; }
+    .dest-region { font-size: .58rem; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; color: rgba(255,255,255,.6); margin-bottom: 5px; }
+    .dest-name { font-family: var(--font-disp); font-size: 1.7rem; font-weight: 700; color: white; line-height: 1; margin-bottom: 10px; }
+    .dest-card--large .dest-name { font-size: 2.3rem; }
+    .dest-wa-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,.12); backdrop-filter: blur(8px); color: white;
+      font-size: .65rem; font-weight: 500; text-decoration: none;
+      padding: 7px 14px; border-radius: 100px;
+      border: 1px solid rgba(255,255,255,.2);
+      transition: background .25s, transform .2s;
+    }
+    .dest-wa-link:hover { background: var(--green); border-color: var(--green); transform: translateY(-2px); }
+    .dest-wa-link svg { width: 13px; height: 13px; fill: white; }
+
+    /* Geometric city silhouettes (CSS) */
+    .city-art { position: absolute; bottom: 0; left: 0; right: 0; overflow: hidden; }
+
+    /* ─── HOW IT WORKS ─── */
+    #how { padding: 110px 48px; background: var(--white); position: relative; overflow: hidden; }
+    .how-inner { max-width: 1000px; margin: 0 auto; }
+    .how-header { text-align: center; margin-bottom: 72px; }
+    .how-header .section-tag { justify-content: center; }
+    .steps-container { position: relative; }
+    .steps-timeline {
+      position: absolute; top: 36px; left: 12%; right: 12%; height: 2px;
+      background: var(--border); overflow: hidden;
+    }
+    .steps-timeline-fill {
+      height: 100%; width: 0%; border-radius: 2px;
+      background: linear-gradient(to right, var(--blue), var(--green));
+    }
+    .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; position: relative; z-index: 1; }
+    .step { text-align: center; opacity: 0; transform: translateY(40px); transition: opacity .7s ease, transform .7s ease; }
+    .step.visible { opacity: 1; transform: translateY(0); }
+    .step:nth-child(2) { transition-delay: .15s; }
+    .step:nth-child(3) { transition-delay: .3s; }
+    .step-num {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: var(--blue); color: white;
+      font-family: var(--font-disp); font-size: 1.6rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 22px; position: relative; z-index: 2;
+      box-shadow: 0 8px 24px rgba(14,165,233,.3);
+    }
+    .step:nth-child(2) .step-num { background: var(--navy); box-shadow: 0 8px 24px rgba(15,23,42,.2); }
+    .step:nth-child(3) .step-num { background: var(--green); box-shadow: 0 8px 24px rgba(37,211,102,.3); }
+    .step-title { font-family: var(--font-disp); font-size: 1.25rem; font-weight: 700; color: var(--navy); margin-bottom: 10px; }
+    .step-desc { font-size: .82rem; line-height: 1.75; color: var(--text-light); }
+
+    /* ─── WHY ZOOM ─── */
+    #why { padding: 100px 48px; background: var(--navy); position: relative; overflow: hidden; }
+    .why-glow {
+      position: absolute; border-radius: 50%; background: rgba(14,165,233,.07);
+      pointer-events: none; will-change: transform;
+    }
+    .why-inner { max-width: 1100px; margin: 0 auto; }
+    .why-header { text-align: center; margin-bottom: 60px; }
+    .why-header .section-tag { justify-content: center; color: var(--blue); }
+    .why-header .section-tag::before { background: var(--blue); }
+    .why-header .section-title { color: white; }
+    .why-header .section-title em { color: #7dd3fc; }
+    .why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .why-card {
+      padding: 34px 26px;
+      background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); border-radius: 12px;
+      opacity: 0; transform: translateY(30px); transition: opacity .7s ease, transform .7s ease;
+    }
+    .why-card.visible { opacity: 1; transform: translateY(0); }
+    .why-card:nth-child(2) { transition-delay: .12s; }
+    .why-card:nth-child(3) { transition-delay: .24s; }
+    .why-icon {
+      width: 48px; height: 48px; background: rgba(14,165,233,.15); border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; margin-bottom: 18px;
+    }
+    .why-icon svg { width: 24px; height: 24px; stroke: var(--blue); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+    .why-card-title { font-family: var(--font-disp); font-size: 1.15rem; font-weight: 700; color: white; margin-bottom: 10px; }
+    .why-card-desc { font-size: .8rem; line-height: 1.8; color: rgba(255,255,255,.48); }
+
+    /* ─── BOOKING ─── */
+    #booking {
+      padding: 140px 48px; text-align: center; position: relative; overflow: hidden;
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 45%, #bae6fd 100%);
+    }
+    .booking-deco-plane { position: absolute; pointer-events: none; opacity: .07; will-change: transform; }
+    .booking-content { position: relative; z-index: 1; max-width: 680px; margin: 0 auto; }
+    .booking-title {
+      font-family: var(--font-disp); font-size: clamp(2.3rem, 5.5vw, 4.5rem);
+      font-weight: 900; line-height: 1.05; color: var(--navy); margin-bottom: 18px;
+    }
+    .booking-title em { font-style: italic; color: var(--blue-dark); }
+    .booking-sub { font-size: .88rem; line-height: 1.8; color: var(--text-light); max-width: 460px; margin: 0 auto 44px; }
+    .booking-wa-btn {
+      display: inline-flex; align-items: center; gap: 12px;
+      background: var(--green); color: white;
+      font-size: .85rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+      text-decoration: none; padding: 18px 48px; border-radius: 8px;
+      box-shadow: 0 8px 30px rgba(37,211,102,.4);
+      transition: background .25s, transform .2s, box-shadow .25s;
+    }
+    .booking-wa-btn:hover { background: var(--green-dark); transform: translateY(-3px); box-shadow: 0 16px 40px rgba(37,211,102,.5); }
+    .booking-wa-btn svg { width: 24px; height: 24px; fill: white; }
+    .booking-note { margin-top: 18px; font-size: .7rem; color: var(--text-light); letter-spacing: .06em; }
+
+    /* ─── FOOTER ─── */
+    footer { background: var(--navy); padding: 64px 48px 36px; }
+    .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 48px; justify-content: space-between; align-items: flex-start; }
+    .footer-logo { font-family: var(--font-disp); font-size: 1.8rem; font-weight: 700; color: white; margin-bottom: 8px; }
+    .footer-logo span { color: var(--blue); }
+    .footer-tagline { font-size: .75rem; color: rgba(255,255,255,.38); line-height: 1.6; max-width: 220px; }
+    .footer-col h4 { font-size: .65rem; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--blue); margin-bottom: 18px; }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 10px; }
+    .footer-col ul li a { font-size: .78rem; color: rgba(255,255,255,.45); text-decoration: none; transition: color .25s; }
+    .footer-col ul li a:hover { color: white; }
+    .footer-bottom { max-width: 1100px; margin: 36px auto 0; padding-top: 22px; border-top: 1px solid rgba(255,255,255,.07); display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: center; }
+    .footer-copy { font-size: .7rem; color: rgba(255,255,255,.28); }
+    .footer-social { display: flex; gap: 10px; }
+    .soc-btn { width: 36px; height: 36px; border: 1px solid rgba(255,255,255,.1); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,.38); text-decoration: none; transition: background .25s, border-color .25s, color .25s; }
+    .soc-btn:hover { background: var(--blue); border-color: var(--blue); color: white; }
+    .soc-btn svg { width: 15px; height: 15px; fill: currentColor; }
+
+    /* ─── SHARED REVEAL ─── */
+    .reveal { opacity: 0; transform: translateY(35px); transition: opacity .8s ease, transform .8s ease; }
+    .reveal.from-left { transform: translateX(-40px); }
+    .reveal.from-right { transform: translateX(40px); }
+    .reveal.visible { opacity: 1 !important; transform: translate(0, 0) !important; }
+    .reveal.d1 { transition-delay: .1s; }
+    .reveal.d2 { transition-delay: .22s; }
+    .reveal.d3 { transition-delay: .36s; }
+
+    /* ─── ANIMS ─── */
+    @keyframes fade-up { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fade-in { to { opacity: 1; } }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 960px) {
+      nav { padding: 16px 24px; }
+      nav.scrolled { padding: 12px 24px; }
+      .nav-links { display: none; }
+      #intro, #how, #why, #booking { padding-left: 24px; padding-right: 24px; }
+      .intro-inner { grid-template-columns: 1fr; gap: 48px; }
+      .dest-grid { grid-template-columns: 1fr 1fr; padding: 0 24px; }
+      .dest-header { padding-left: 24px; padding-right: 24px; }
+      .dest-card--large { grid-column: span 2; }
+      .steps-grid { grid-template-columns: 1fr; gap: 32px; }
+      .steps-timeline { display: none; }
+      .why-grid { grid-template-columns: 1fr; }
+      .footer-inner { flex-direction: column; gap: 32px; }
+    }
+    @media (max-width: 600px) {
+      .hero-actions { flex-direction: column; align-items: stretch; }
+      .btn-wa, .btn-learn { justify-content: center; }
+      .dest-grid { grid-template-columns: 1fr; }
+      .dest-card--large { grid-column: span 1; }
+      footer { padding: 48px 24px 28px; }
+      .footer-bottom { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-logo">Zoom<span> Travels</span></div>
+  <div class="loader-bar"><div class="loader-fill"></div></div>
+  <div class="loader-text">Finding the best prices&hellip;</div>
+</div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="nav-logo">Zoom<span> Travels</span></a>
+  <div class="nav-links">
+    <a href="#destinations">Destinations</a>
+    <a href="#how">How It Works</a>
+    <a href="#why">Why Us</a>
+    <a href="#booking">Book Now</a>
+  </div>
+  <a href="https://wa.me/9607753533?text=Hi%2C+I%27d+like+to+book+a+flight." target="_blank" rel="noopener noreferrer" class="nav-btn">
+    <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+    Book Now
+  </a>
+</nav>
+
+<!-- ═══ HERO (sticky, 300vh scroll space) ═══ -->
+<div class="hero-wrapper">
+  <section id="hero">
+    <div class="hero-sky" id="heroSky"></div>
+
+    <!-- Sun -->
+    <div class="hero-sun" id="heroSun"></div>
+
+    <!-- Cloud Layer 1 — large, slow (rightward drift) -->
+    <div class="cloud-layer cloud-layer-1" id="cloudL1">
+      <svg class="cloud-svg" style="top:12%;left:-8%;width:28vw;max-width:340px;" viewBox="0 0 340 110" xmlns="http://www.w3.org/2000/svg">
+        <path d="M310,85 Q310,50 278,50 Q272,22 245,28 Q230,8 205,16 Q182,4 160,18 Q138,10 118,28 Q88,28 80,52 Q50,52 45,72 Q42,88 68,90 L300,90 Q310,90 310,85Z" fill="white" opacity="0.88"/>
+      </svg>
+      <svg class="cloud-svg" style="top:28%;left:55%;width:20vw;max-width:240px;" viewBox="0 0 240 80" xmlns="http://www.w3.org/2000/svg">
+        <path d="M215,62 Q215,38 195,38 Q190,18 172,22 Q161,8 144,14 Q128,6 112,16 Q96,10 82,22 Q60,22 55,40 Q35,40 32,56 Q30,66 50,68 L205,68 Q215,68 215,62Z" fill="white" opacity="0.75"/>
+      </svg>
+    </div>
+
+    <!-- Cloud Layer 2 — medium, leftward drift -->
+    <div class="cloud-layer cloud-layer-2" id="cloudL2">
+      <svg class="cloud-svg" style="top:18%;right:-5%;width:22vw;max-width:280px;" viewBox="0 0 280 90" xmlns="http://www.w3.org/2000/svg">
+        <path d="M252,72 Q252,44 228,44 Q222,20 200,26 Q188,10 166,18 Q148,6 128,18 Q108,8 88,26 Q64,26 58,48 Q36,48 32,66 Q30,78 56,80 L240,80 Q252,80 252,72Z" fill="white" opacity="0.80"/>
+      </svg>
+      <svg class="cloud-svg" style="top:42%;left:8%;width:16vw;max-width:200px;" viewBox="0 0 200 68" xmlns="http://www.w3.org/2000/svg">
+        <path d="M180,54 Q180,32 162,32 Q157,14 142,18 Q132,5 116,12 Q100,4 85,14 Q68,8 55,22 Q38,22 34,38 Q18,38 16,52 Q14,60 32,62 L168,62 Q180,62 180,54Z" fill="white" opacity="0.70"/>
+      </svg>
+    </div>
+
+    <!-- Cloud Layer 3 — small, fastest drift -->
+    <div class="cloud-layer cloud-layer-3" id="cloudL3">
+      <svg class="cloud-svg" style="top:35%;left:30%;width:14vw;max-width:180px;" viewBox="0 0 180 60" xmlns="http://www.w3.org/2000/svg">
+        <path d="M162,48 Q162,28 146,28 Q141,12 128,16 Q118,4 104,10 Q90,3 77,12 Q62,7 50,18 Q36,18 32,34 Q18,34 16,46 Q14,54 30,56 L150,56 Q162,56 162,48Z" fill="white" opacity="0.65"/>
+      </svg>
+      <svg class="cloud-svg" style="top:55%;right:20%;width:12vw;max-width:150px;" viewBox="0 0 150 52" xmlns="http://www.w3.org/2000/svg">
+        <path d="M135,42 Q135,24 122,24 Q118,10 106,14 Q97,4 84,9 Q72,2 61,10 Q49,6 40,16 Q28,16 25,30 Q14,30 12,40 Q11,47 25,48 L125,48 Q135,48 135,42Z" fill="white" opacity="0.60"/>
+      </svg>
+    </div>
+
+    <!-- Airplane -->
+    <div class="hero-plane" id="heroPlane">
+      <svg viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg">
+        <!-- Fuselage body -->
+        <ellipse cx="138" cy="50" rx="112" ry="16" fill="#1e3a5f"/>
+        <!-- Nose cone -->
+        <path d="M240,45 Q272,48 280,52 Q272,56 240,55 Z" fill="#0ea5e9"/>
+        <!-- Tail fin vertical -->
+        <path d="M38,50 L28,20 L42,20 L52,44 Z" fill="#0f172a"/>
+        <!-- Tail stabilizers -->
+        <path d="M38,50 L10,62 L14,68 L44,54 Z" fill="#1e3a5f"/>
+        <path d="M38,50 L10,38 L14,32 L44,46 Z" fill="#1e3a5f"/>
+        <!-- Main wings -->
+        <path d="M120,50 L76,86 L56,86 L96,50 Z" fill="#1e3a5f"/>
+        <path d="M120,50 L76,14 L56,14 L96,50 Z" fill="#1e3a5f"/>
+        <!-- Wing highlights -->
+        <path d="M120,50 L104,86 L92,86 L110,50 Z" fill="#2563eb" opacity="0.6"/>
+        <path d="M120,50 L104,14 L92,14 L110,50 Z" fill="#2563eb" opacity="0.6"/>
+        <!-- Engine pods -->
+        <ellipse cx="100" cy="72" rx="18" ry="7" fill="#334155"/>
+        <ellipse cx="100" cy="28" rx="18" ry="7" fill="#334155"/>
+        <!-- Windows row -->
+        <circle cx="220" cy="49" r="4" fill="#e0f2fe" opacity="0.9"/>
+        <circle cx="204" cy="49" r="4" fill="#e0f2fe" opacity="0.9"/>
+        <circle cx="188" cy="49" r="4" fill="#e0f2fe" opacity="0.9"/>
+        <circle cx="172" cy="49" r="4" fill="#e0f2fe" opacity="0.9"/>
+        <circle cx="156" cy="49" r="4" fill="#e0f2fe" opacity="0.7"/>
+        <!-- Stripe -->
+        <rect x="50" y="47" width="190" height="3" fill="#0ea5e9" opacity="0.5" rx="1.5"/>
+      </svg>
+    </div>
+
+    <!-- Bottom fade -->
+    <div class="hero-horizon"></div>
+
+    <!-- Content -->
+    <div class="hero-content" id="heroContent">
+      <div class="hero-badge">Now booking &middot; Maldives &amp; beyond</div>
+      <h1 class="hero-title">Your next<br/><span class="hi">flight</span> awaits.</h1>
+      <p class="hero-sub">Great prices on tickets from all major airlines. Find your fare and book in seconds through WhatsApp &mdash; no apps, no hassle.</p>
+      <div class="hero-actions">
+        <a href="https://wa.me/9607753533?text=Hi%2C+I%27d+like+to+book+a+flight." target="_blank" rel="noopener noreferrer" class="btn-wa">
+          <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+          Book via WhatsApp
+        </a>
+        <a href="#destinations" class="btn-learn">See destinations &darr;</a>
+      </div>
+    </div>
+
+    <div class="scroll-hint">
+      <span>Scroll to explore</span>
+      <div class="scroll-mouse"></div>
+    </div>
+  </section>
+</div><!-- end .hero-wrapper -->
+
+
+<!-- ═══ INTRO ═══ -->
+<section id="intro">
+  <div class="intro-inner">
+    <div class="intro-left reveal from-left">
+      <p class="section-tag">About Zoom Travels</p>
+      <h2 class="section-title">We find the <em>best fares</em><br/>so you can just fly.</h2>
+      <p class="intro-body">Zoom Travels searches across all major airlines to find you the best-priced flight tickets. No membership fees, no hidden charges &mdash; just good deals, booked quickly through a simple WhatsApp conversation.</p>
+      <div class="intro-stats">
+        <div class="stat-box">
+          <div class="stat-num" data-count="50" data-suffix="+">50+</div>
+          <div class="stat-label">Destinations</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" data-count="5000" data-suffix="+">5000+</div>
+          <div class="stat-label">Happy Passengers</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" data-count="24" data-suffix="/7">24/7</div>
+          <div class="stat-label">Support</div>
+        </div>
+      </div>
+    </div>
+    <div class="intro-right reveal from-right">
+      <div class="window-wrap">
+        <div class="window-frame-deco"></div>
+        <div class="window-frame">
+          <div class="window-scene" id="windowScene">
+            <div class="win-cloud win-cloud-1"></div>
+            <div class="win-cloud win-cloud-2"></div>
+            <div class="win-cloud win-cloud-3"></div>
+            <div class="win-city" style="height:35%"></div>
+            <div class="win-caption">
+              <small>Currently flying over</small>
+              The Indian Ocean
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══ DESTINATIONS ═══ -->
+<section id="destinations">
+  <div class="dest-header">
+    <div class="dest-title-row reveal">
+      <div>
+        <p class="section-tag">Popular Routes</p>
+        <h2 class="section-title">Where do you want<br/>to <em>fly next?</em></h2>
+      </div>
+      <span class="dest-count">05 destinations</span>
+    </div>
+  </div>
+
+  <div class="dest-grid">
+
+    <!-- Maldives — large card -->
+    <div class="dest-card dest-card--large">
+      <div class="dest-card-inner">
+        <div class="dest-bg-wrap" data-parallax>
+          <div class="dest-bg-scene art-maldives">
+            <!-- Maldives island + ocean illustration -->
+            <svg style="position:absolute;bottom:0;left:0;right:0;width:100%;height:55%" viewBox="0 0 400 200" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+              <ellipse cx="200" cy="200" rx="200" ry="80" fill="#065f46"/>
+              <ellipse cx="200" cy="185" rx="140" ry="55" fill="#0891b2" opacity="0.5"/>
+              <ellipse cx="200" cy="172" rx="80" ry="32" fill="#e0f2fe" opacity="0.4"/>
+              <!-- Palm trees -->
+              <line x1="160" y1="170" x2="155" y2="130" stroke="#064e3b" stroke-width="4"/>
+              <ellipse cx="153" cy="128" rx="18" ry="10" fill="#16a34a" opacity="0.9"/>
+              <line x1="240" y1="168" x2="248" y2="125" stroke="#064e3b" stroke-width="4"/>
+              <ellipse cx="250" cy="122" rx="18" ry="10" fill="#16a34a" opacity="0.9"/>
+            </svg>
+          </div>
+        </div>
+        <div class="dest-overlay"></div>
+        <div class="dest-info">
+          <p class="dest-region">Indian Ocean</p>
+          <h3 class="dest-name">Maldives</h3>
+          <a href="https://wa.me/9607753533?text=Hi%2C+I+want+to+book+a+flight+to+the+Maldives." target="_blank" rel="noopener noreferrer" class="dest-wa-link">
+            <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+            Book this route
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dubai -->
+    <div class="dest-card">
+      <div class="dest-card-inner">
+        <div class="dest-bg-wrap" data-parallax>
+          <div class="dest-bg-scene art-dubai">
+            <svg style="position:absolute;bottom:0;left:0;right:0;width:100%;height:70%" viewBox="0 0 300 180" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+              <!-- Desert ground -->
+              <rect x="0" y="140" width="300" height="40" fill="#92400e"/>
+              <!-- Buildings / Burj -->
+              <rect x="130" y="30" width="14" height="110" fill="#78350f"/>
+              <polygon points="137,30 133,50 141,50" fill="#d97706"/>
+              <!-- Other buildings -->
+              <rect x="80" y="80" width="20" height="60" fill="#92400e"/>
+              <rect x="60" y="95" width="16" height="45" fill="#78350f"/>
+              <rect x="170" y="70" width="24" height="70" fill="#92400e"/>
+              <rect x="200" y="90" width="18" height="50" fill="#78350f"/>
+              <rect x="220" y="105" width="14" height="35" fill="#92400e"/>
+            </svg>
+          </div>
+        </div>
+        <div class="dest-overlay"></div>
+        <div class="dest-info">
+          <p class="dest-region">Middle East</p>
+          <h3 class="dest-name">Dubai</h3>
+          <a href="https://wa.me/9607753533?text=Hi%2C+I+want+to+book+a+flight+to+Dubai." target="_blank" rel="noopener noreferrer" class="dest-wa-link">
+            <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+            Book this route
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Singapore -->
+    <div class="dest-card">
+      <div class="dest-card-inner">
+        <div class="dest-bg-wrap" data-parallax>
+          <div class="dest-bg-scene art-singapore">
+            <svg style="position:absolute;bottom:0;left:0;right:0;width:100%;height:65%" viewBox="0 0 300 170" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+              <rect x="0" y="130" width="300" height="40" fill="#064e3b"/>
+              <!-- Marina Bay Sands silhouette -->
+              <rect x="55" y="75" width="18" height="55" fill="#065f46"/>
+              <rect x="80" y="75" width="18" height="55" fill="#065f46"/>
+              <rect x="105" y="75" width="18" height="55" fill="#065f46"/>
+              <rect x="50" y="68" width="78" height="14" rx="4" fill="#047857"/>
+              <!-- Garden domes -->
+              <ellipse cx="190" cy="105" rx="28" ry="25" fill="#059669" opacity="0.7"/>
+              <ellipse cx="230" cy="108" rx="22" ry="20" fill="#10b981" opacity="0.7"/>
+              <!-- Other buildings -->
+              <rect x="160" y="85" width="12" height="45" fill="#065f46"/>
+            </svg>
+          </div>
+        </div>
+        <div class="dest-overlay"></div>
+        <div class="dest-info">
+          <p class="dest-region">Southeast Asia</p>
+          <h3 class="dest-name">Singapore</h3>
+          <a href="https://wa.me/9607753533?text=Hi%2C+I+want+to+book+a+flight+to+Singapore." target="_blank" rel="noopener noreferrer" class="dest-wa-link">
+            <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+            Book this route
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Paris -->
+    <div class="dest-card">
+      <div class="dest-card-inner">
+        <div class="dest-bg-wrap" data-parallax>
+          <div class="dest-bg-scene art-paris">
+            <svg style="position:absolute;bottom:0;left:0;right:0;width:100%;height:70%" viewBox="0 0 300 180" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+              <rect x="0" y="140" width="300" height="40" fill="#3b0764"/>
+              <!-- Eiffel Tower -->
+              <polygon points="150,20 138,140 162,140" fill="#7e22ce" opacity="0.9"/>
+              <rect x="140" y="72" width="20" height="3" fill="#9333ea"/>
+              <rect x="137" y="90" width="26" height="3" fill="#9333ea"/>
+              <!-- Buildings -->
+              <rect x="60" y="90" width="28" height="50" fill="#6b21a8"/>
+              <rect x="40" y="105" width="18" height="35" fill="#7e22ce"/>
+              <rect x="200" y="95" width="24" height="45" fill="#6b21a8"/>
+              <rect x="228" y="110" width="18" height="30" fill="#7e22ce"/>
+            </svg>
+          </div>
+        </div>
+        <div class="dest-overlay"></div>
+        <div class="dest-info">
+          <p class="dest-region">Europe</p>
+          <h3 class="dest-name">Paris</h3>
+          <a href="https://wa.me/9607753533?text=Hi%2C+I+want+to+book+a+flight+to+Paris." target="_blank" rel="noopener noreferrer" class="dest-wa-link">
+            <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+            Book this route
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tokyo -->
+    <div class="dest-card">
+      <div class="dest-card-inner">
+        <div class="dest-bg-wrap" data-parallax>
+          <div class="dest-bg-scene art-tokyo">
+            <svg style="position:absolute;bottom:0;left:0;right:0;width:100%;height:65%" viewBox="0 0 300 170" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+              <rect x="0" y="130" width="300" height="40" fill="#4c0519"/>
+              <!-- Mount Fuji -->
+              <polygon points="150,10 70,130 230,130" fill="#9f1239" opacity="0.7"/>
+              <polygon points="150,10 120,55 180,55" fill="white" opacity="0.5"/>
+              <!-- Tokyo Tower -->
+              <polygon points="240,50 233,130 247,130" fill="#be123c"/>
+              <rect x="232" y="78" width="16" height="3" fill="#f43f5e"/>
+              <!-- Buildings -->
+              <rect x="40" y="80" width="20" height="50" fill="#9f1239"/>
+              <rect x="20" y="95" width="16" height="35" fill="#be123c"/>
+              <rect x="268" y="90" width="18" height="40" fill="#9f1239"/>
+            </svg>
+          </div>
+        </div>
+        <div class="dest-overlay"></div>
+        <div class="dest-info">
+          <p class="dest-region">Far East</p>
+          <h3 class="dest-name">Tokyo</h3>
+          <a href="https://wa.me/9607753533?text=Hi%2C+I+want+to+book+a+flight+to+Tokyo." target="_blank" rel="noopener noreferrer" class="dest-wa-link">
+            <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+            Book this route
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══ HOW IT WORKS ═══ -->
+<section id="how">
+  <div class="how-inner">
+    <div class="how-header">
+      <p class="section-tag">Simple Process</p>
+      <h2 class="section-title">How it <em>works</em></h2>
+    </div>
+    <div class="steps-container">
+      <div class="steps-timeline"><div class="steps-timeline-fill" id="timelineFill"></div></div>
+      <div class="steps-grid">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h3 class="step-title">Message Us</h3>
+          <p class="step-desc">Send us a WhatsApp message with your travel dates, destination, and number of passengers. We reply fast, every day of the week.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h3 class="step-title">We Search</h3>
+          <p class="step-desc">Our team searches across multiple airlines and finds you the best available fares &mdash; economy, business, or first class.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h3 class="step-title">You Fly</h3>
+          <p class="step-desc">Confirm your booking, complete payment, and receive your e-ticket. Pack your bags &mdash; your journey begins.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══ WHY ZOOM ═══ -->
+<section id="why">
+  <!-- Decorative glows -->
+  <div class="why-glow" style="width:500px;height:500px;top:-100px;left:-100px;"></div>
+  <div class="why-glow" style="width:300px;height:300px;bottom:0;right:0;"></div>
+
+  <div class="why-inner">
+    <div class="why-header">
+      <p class="section-tag">Why Zoom Travels</p>
+      <h2 class="section-title">Great prices.<br/><em>Zero stress.</em></h2>
+    </div>
+    <div class="why-grid">
+      <div class="why-card">
+        <div class="why-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        </div>
+        <h3 class="why-card-title">All Major Airlines</h3>
+        <p class="why-card-desc">We search across all major airlines to find you the most affordable fare for your route. No airline partnerships &mdash; just honest comparisons.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        </div>
+        <h3 class="why-card-title">Fast Response</h3>
+        <p class="why-card-desc">Send us a message and get a fare quote back within minutes. Our team is available 7 days a week to help you plan your trip quickly.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">
+          <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.64A2 2 0 012 1h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+        </div>
+        <h3 class="why-card-title">WhatsApp Booking</h3>
+        <p class="why-card-desc">No complicated forms or apps. Book your flight through a simple WhatsApp conversation &mdash; the easiest way to get your ticket sorted.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══ BOOKING CTA ═══ -->
+<section id="booking">
+  <!-- Decorative large airplane -->
+  <div class="booking-deco-plane" id="bookingPlane" style="top:10%;right:-5%;transform:rotate(-15deg);">
+    <svg width="400" viewBox="0 0 280 100" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="138" cy="50" rx="112" ry="16" fill="#0369a1"/>
+      <path d="M240,45 Q272,48 280,52 Q272,56 240,55 Z" fill="#0ea5e9"/>
+      <path d="M38,50 L28,20 L42,20 L52,44 Z" fill="#0f172a"/>
+      <path d="M38,50 L10,62 L14,68 L44,54 Z" fill="#0369a1"/>
+      <path d="M38,50 L10,38 L14,32 L44,46 Z" fill="#0369a1"/>
+      <path d="M120,50 L76,86 L56,86 L96,50 Z" fill="#0369a1"/>
+      <path d="M120,50 L76,14 L56,14 L96,50 Z" fill="#0369a1"/>
+      <ellipse cx="100" cy="72" rx="18" ry="7" fill="#1e40af"/>
+      <ellipse cx="100" cy="28" rx="18" ry="7" fill="#1e40af"/>
+    </svg>
+  </div>
+
+  <div class="booking-content reveal">
+    <p class="section-tag" style="justify-content:center;">Ready to go?</p>
+    <h2 class="booking-title">Book your flight<br/><em>in minutes.</em></h2>
+    <p class="booking-sub">Tell us where you want to go and when. We will find you the best ticket prices from all airlines and confirm your booking &mdash; all through WhatsApp.</p>
+    <a href="https://wa.me/9607753533?text=Hi%2C+I%27d+like+to+book+a+flight.+My+details+are%3A" target="_blank" rel="noopener noreferrer" class="booking-wa-btn">
+      <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+      Book via WhatsApp
+    </a>
+    <p class="booking-note">Available daily &mdash; response within minutes</p>
+  </div>
+</section>
+
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-logo">Zoom<span> Travels</span></div>
+      <p class="footer-tagline">Great flight prices, booked through WhatsApp. Based in the Maldives.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Explore</h4>
+      <ul>
+        <li><a href="#destinations">Destinations</a></li>
+        <li><a href="#how">How It Works</a></li>
+        <li><a href="#why">Why Zoom</a></li>
+        <li><a href="#booking">Book a Flight</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="https://wa.me/9607753533" target="_blank" rel="noopener noreferrer">WhatsApp Us</a></li>
+        <li><a href="mailto:aishathshafaofficial@gmail.com">Email Us</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Follow</h4>
+      <div class="footer-social" style="margin-top:0">
+        <a href="https://wa.me/9607753533" target="_blank" rel="noopener noreferrer" class="soc-btn" title="WhatsApp">
+          <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+        </a>
+        <a href="#" class="soc-btn" title="Instagram">
+          <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        </a>
+        <a href="#" class="soc-btn" title="Facebook">
+          <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">&copy; 2025 Zoom Travels. All rights reserved.</p>
+    <div style="display:flex;gap:20px">
+      <a href="#" style="font-size:.7rem;color:rgba(255,255,255,.25);text-decoration:none">Privacy</a>
+      <a href="#" style="font-size:.7rem;color:rgba(255,255,255,.25);text-decoration:none">Terms</a>
+    </div>
+  </div>
+</footer>
+
+
+<script>
+  // ─── Helpers ───
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  function clamp(v, lo, hi) { return Math.min(Math.max(v, lo), hi); }
+  function easeInOut(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
+
+  // ─── Loader ───
+  window.addEventListener('load', () => {
+    setTimeout(() => document.getElementById('loader').classList.add('hide'), 1700);
+  });
+
+  // ─── Nav scroll state ───
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  }, { passive: true });
+
+  // ─── Grab hero elements ───
+  const heroWrapper  = document.querySelector('.hero-wrapper');
+  const heroSky      = document.getElementById('heroSky');
+  const heroSun      = document.getElementById('heroSun');
+  const heroPlane    = document.getElementById('heroPlane');
+  const heroContent  = document.getElementById('heroContent');
+  const cloudL1      = document.getElementById('cloudL1');
+  const cloudL2      = document.getElementById('cloudL2');
+  const cloudL3      = document.getElementById('cloudL3');
+
+  // ─── Hero scroll animation ───
+  function animateHero() {
+    if (!heroWrapper) return;
+    const scrollableH = heroWrapper.offsetHeight - window.innerHeight;
+    const p = clamp(window.scrollY / scrollableH, 0, 1); // 0 → 1
+
+    // Cloud parallax (different speeds + directions)
+    if (cloudL1) cloudL1.style.transform = 'translateX(' + (p * 230) + 'px)';
+    if (cloudL2) cloudL2.style.transform = 'translateX(' + (-p * 160) + 'px) translateY(' + (-p * 18) + 'px)';
+    if (cloudL3) cloudL3.style.transform = 'translateX(' + (p * 400) + 'px) translateY(' + (p * 12) + 'px)';
+
+    // Sun drifts up and right slightly
+    if (heroSun) heroSun.style.transform = 'translate(' + (p * 40) + 'px, ' + (-p * 30) + 'px)';
+
+    // Airplane flies along an arc: bottom-left → upper-right
+    if (heroPlane) {
+      var vw = window.innerWidth;
+      var vh = window.innerHeight;
+      var ep = easeInOut(p);
+      var px = lerp(-180, vw + 200, ep);
+      var py = lerp(vh * 0.68, vh * 0.08, ep);
+      var tilt = lerp(8, -14, p); // nose tilts up as it climbs
+      heroPlane.style.transform = 'translate(' + px + 'px, ' + py + 'px) rotate(' + tilt + 'deg)';
+    }
+
+    // Hero text: fades out and rises as we near end of sticky zone
+    if (heroContent) {
+      var fadeStart = 0.52;
+      var fadeEnd   = 0.82;
+      var fade = p > fadeStart ? clamp(1 - (p - fadeStart) / (fadeEnd - fadeStart), 0, 1) : 1;
+      heroContent.style.opacity = fade;
+      heroContent.style.transform = 'translateY(' + ((1 - fade) * -55) + 'px)';
+    }
+
+    // Sky colour shifts from morning blue to midday blue
+    if (heroSky) {
+      var r = Math.round(lerp(135, 72, p));
+      var g = Math.round(lerp(206, 158, p));
+      var b = Math.round(lerp(235, 215, p));
+      heroSky.style.background = 'linear-gradient(180deg, rgb(' + r + ',' + g + ',' + b + ') 0%, #b7dfed 35%, #e0f2fe 65%, #f8fafc 100%)';
+    }
+  }
+
+  // ─── Destination card parallax ───
+  function animateDestCards() {
+    var wraps = document.querySelectorAll('[data-parallax]');
+    var vh = window.innerHeight;
+    wraps.forEach(function(el) {
+      var card = el.closest('.dest-card');
+      if (!card) return;
+      var rect = card.getBoundingClientRect();
+      var relCenter = (rect.top + rect.height / 2) / vh;
+      var shift = (relCenter - 0.5) * 55;
+      el.style.transform = 'translateY(' + shift + 'px)';
+    });
+  }
+
+  // ─── Intro window parallax ───
+  function animateWindow() {
+    var scene = document.getElementById('windowScene');
+    if (!scene) return;
+    var frame = scene.closest('.window-frame');
+    if (!frame) return;
+    var rect = frame.getBoundingClientRect();
+    var vh = window.innerHeight;
+    var shift = ((rect.top + rect.height / 2) / vh - 0.5) * 36;
+    scene.style.transform = 'translateY(' + shift + 'px)';
+  }
+
+  // ─── Steps timeline fill ───
+  function animateTimeline() {
+    var howSection = document.getElementById('how');
+    if (!howSection) return;
+    var fill = document.getElementById('timelineFill');
+    if (!fill) return;
+    var rect = howSection.getBoundingClientRect();
+    var vh = window.innerHeight;
+    var p = clamp((vh - rect.top) / (vh * 0.7), 0, 1);
+    fill.style.width = (p * 100) + '%';
+  }
+
+  // ─── Booking section deco plane drifts ───
+  function animateBookingPlane() {
+    var el = document.getElementById('bookingPlane');
+    if (!el) return;
+    var rect = el.closest('#booking').getBoundingClientRect();
+    var vh = window.innerHeight;
+    var p = clamp(1 - rect.top / vh, 0, 1);
+    el.style.transform = 'rotate(-15deg) translateX(' + (p * -30) + 'px)';
+  }
+
+  // ─── Why section glow drift ───
+  function animateWhyGlows() {
+    var glows = document.querySelectorAll('.why-glow');
+    if (!glows.length) return;
+    var sect = document.getElementById('why');
+    if (!sect) return;
+    var rect = sect.getBoundingClientRect();
+    var vh = window.innerHeight;
+    var p = clamp((vh - rect.top) / (vh + sect.offsetHeight), 0, 1);
+    glows[0].style.transform = 'translate(' + (p * 40) + 'px, ' + (p * 40) + 'px)';
+    if (glows[1]) glows[1].style.transform = 'translate(' + (-p * 30) + 'px, ' + (-p * 30) + 'px)';
+  }
+
+  // ─── RAF loop — runs every frame ───
+  function tick() {
+    animateHero();
+    animateDestCards();
+    animateWindow();
+    animateTimeline();
+    animateBookingPlane();
+    animateWhyGlows();
+    requestAnimationFrame(tick);
+  }
+  tick();
+
+  // ─── IntersectionObserver for reveal animations ───
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -48px 0px' });
+
+  document.querySelectorAll('.reveal, .step, .why-card').forEach(function(el) {
+    observer.observe(el);
+  });
+
+  // ─── Counter animation ───
+  function animateCounter(el) {
+    var target   = parseInt(el.dataset.count, 10);
+    var suffix   = el.dataset.suffix || '';
+    var duration = 1600;
+    var start    = Date.now();
+    function update() {
+      var elapsed  = Date.now() - start;
+      var progress = Math.min(elapsed / duration, 1);
+      var eased    = 1 - Math.pow(1 - progress, 3);
+      el.textContent = Math.round(eased * target) + suffix;
+      if (progress < 1) requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
+  }
+
+  var counterObs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        animateCounter(entry.target);
+        counterObs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  document.querySelectorAll('[data-count]').forEach(function(el) {
+    counterObs.observe(el);
+  });
+
+  // ─── Smooth anchor scroll ───
+  document.querySelectorAll('a[href^="#"]').forEach(function(a) {
+    a.addEventListener('click', function(e) {
+      var href = a.getAttribute('href');
+      if (href === '#') return;
+      e.preventDefault();
+      var target = document.querySelector(href);
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+</script>
+</body>
+</html>
