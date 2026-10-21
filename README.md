@@ -70,7 +70,7 @@ I currently work as a freelance software engineer, delivering projects end to en
 | :--- | :--- | :--- |
 | [isleweb.com](https://isleweb.com) | Company website for Isle Web, designed, built and launched end to end | Web, backend, cloud |
 | [zoomtravels.net](https://zoomtravels.net) | Responsive single page site with scroll driven animations and component based layout | Astro 5, Tailwind CSS 4, GSAP, Alpine.js |
-| National health statistics platform | Prototype for the Digital Health Blueprint, Ministry of Health | React Native, Node.js, Express, PostgreSQL |
+| Statistics platform | Prototype for a Statistics Platform | React Native, Node.js, Express, PostgreSQL |
 | Peer-to-peer shopping platform | Marketplace connecting buyers and sellers directly, in development | In development |
 
 ## Tech Stack
