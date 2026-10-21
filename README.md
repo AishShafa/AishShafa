@@ -6,6 +6,8 @@
   <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=500&size=20&pause=1500&color=BFBFBF&center=true&vCenter=true&width=700&lines=Full+stack+software+engineer;Database+design+and+backend+architecture;API+development+and+automated+testing;Cloud+deployment+and+technical+documentation" alt="Typing SVG" />
 </a>
 
+
+
 <br/>
 
 ![Profile Views](https://komarev.com/ghpvc/?username=aishshafa&label=Profile%20views&color=000000&labelColor=333333&style=flat-square)
@@ -13,47 +15,30 @@
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-aishathshafa-000000?style=flat-square&logo=linkedin&labelColor=333333)](https://www.linkedin.com/in/aishathshafa)
 [![Email](https://img.shields.io/badge/Email-aishathshafaofficial%40gmail.com-000000?style=flat-square&logo=gmail&labelColor=333333)](mailto:aishathshafaofficial@gmail.com)
 
-<br/>
-
-<table align="center">
-  <tr>
-    <td align="right"><b>Role</b></td>
-    <td align="left">Software Engineer</td>
-  </tr>
-  <tr>
-    <td align="right"><b>Focus</b></td>
-    <td align="left">Database design, backend, frontend, cloud</td>
-  </tr>
-  <tr>
-    <td align="right"><b>Languages</b></td>
-    <td align="left">Python, JavaScript, Java, C#, C++, Kotlin, Dart, R</td>
-  </tr>
-  <tr>
-    <td align="right"><b>Databases</b></td>
-    <td align="left">PostgreSQL, MySQL, SQL</td>
-  </tr>
-  <tr>
-    <td align="right"><b>Web and Systems</b></td>
-    <td align="left">React, React Native, Node.js, Express.js, Astro</td>
-  </tr>
-  <tr>
-    <td align="right"><b>Cloud and Tools</b></td>
-    <td align="left">AWS, Git, Postman, Android Studio, Visual Studio</td>
-  </tr>
-  <tr>
-    <td align="right"><b>Practices</b></td>
-    <td align="left">SDLC, Agile, Software Architecture, Automated Testing</td>
-  </tr>
-</table>
-
 </div>
 
-<h2 align="center">About</h2>
-
-<p align="center">
-Hi, I’m Shafa, a software engineer who is passionate about building <em>thoughtful</em>, <em>user-focused</em> software experiences.<br/>
-From interactive web platforms to custom applications, I enjoy blending <em>design</em>, <em>logic</em>, and <em>creativity</em> to bring ideas to life!
-</p>
+<table width="100%">
+  <tr>
+    <th width="45%" align="center">About</th>
+    <th width="55%" align="center">At a Glance</th>
+  </tr>
+  <tr>
+    <td valign="middle" align="left">
+      Hi, I’m Shafa, a software engineer who is passionate about building <em>thoughtful</em>, <em>user-focused</em> software experiences.
+      <br/><br/>
+      From interactive web platforms to custom applications, I enjoy blending <em>design</em>, <em>logic</em>, and <em>creativity</em> to bring ideas to life.
+    </td>
+    <td valign="middle" align="left">
+      <b>Role:</b> Software Engineer<br/>
+      <b>Focus:</b> Database design, backend, frontend, cloud<br/>
+      <b>Languages:</b> Python, JavaScript, Java, C#, C++, Kotlin, Dart, R<br/>
+      <b>Databases:</b> PostgreSQL, MySQL, SQL<br/>
+      <b>Web and Systems:</b> React, React Native, Node.js, Express.js, Astro<br/>
+      <b>Cloud and Tools:</b> AWS, Git, Postman, Android Studio, Visual Studio<br/>
+      <b>Practices:</b> SDLC, Agile, Software Architecture, Automated Testing
+    </td>
+  </tr>
+</table>
 
 <h2 align="center">Tech Stack</h2>
 
@@ -97,7 +82,7 @@ From interactive web platforms to custom applications, I enjoy blending <em>desi
 
 </div>
 
-<h3 align="center">Contribution Snake</h3>
+<h2 align="center">Contribution Snake</h3>
 
 <div align="center">
 <picture>
@@ -111,7 +96,7 @@ From interactive web platforms to custom applications, I enjoy blending <em>desi
 
 <div align="center">
 
-**Open to collaboration and new opportunities.**
+**I am always open to collaboration and new opportunities!**
 
 <a href="mailto:aishathshafaofficial@gmail.com"><img src="https://skillicons.dev/icons?i=gmail&theme=dark" height="40" alt="Gmail" /></a>
 &nbsp;&nbsp;●&nbsp;&nbsp;
