@@ -1,7 +1,4 @@
 <div align="center">
-
-<img src="./assets/banner.svg" width="100%" alt="Aishath Shafa Saudulla, Software Engineer" />
-
 <a href="https://git.io/typing-svg">
   <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=500&size=20&pause=1500&color=BFBFBF&center=true&vCenter=true&width=700&lines=Full+stack+software+engineer;Database+design+and+backend+architecture;API+development+and+automated+testing;Cloud+deployment+and+technical+documentation" alt="Typing SVG" />
 </a>
@@ -30,7 +27,7 @@
 
 ## About
 
-Software engineer who develops, tests and implements systems, websites and databases, from database design and backend through to the frontend and cloud deployment.
+Hi, I’m Shafa, a software engineer who is passionate about building thoughtful, user-focused software experiences. From interactive web platforms to custom applications, I enjoy blending design, logic, and creativity to bring ideas to life.
 
 ## Tech Stack
 
@@ -67,12 +64,6 @@ Software engineer who develops, tests and implements systems, websites and datab
 
 </div>
 
-### Contributions in 3D
-
-<div align="center">
-<img src="./profile-3d-contrib/profile-night-view.svg" alt="3D contribution calendar" width="100%" />
-</div>
-
 ### Contribution Snake
 
 <div align="center">
@@ -86,7 +77,7 @@ Software engineer who develops, tests and implements systems, websites and datab
 <div align="center">
 
 **Open to collaboration and new opportunities.**
-Reach me at [aishathshafaofficial@gmail.com](mailto:aishathshafaofficial@gmail.com) or on [LinkedIn](https://www.linkedin.com/in/aishathshafa).
+Reach me at [My Email](mailto:aishathshafaofficial@gmail.com) or on [LinkedIn](https://www.linkedin.com/in/aishathshafa).
 
 <br/>
 
