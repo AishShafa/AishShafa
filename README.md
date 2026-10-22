@@ -29,12 +29,9 @@
       From interactive web platforms to custom applications, I enjoy blending <em>design</em>, <em>logic</em>, and <em>creativity</em> to bring ideas to life.
     </td>
     <td valign="middle" align="left">
-      <b>Role:</b> Software Engineer<br/>
-      <b>Focus:</b> Database design, backend, frontend, cloud<br/>
-      <b>Languages:</b> Python, JavaScript, Java, C#, C++, Kotlin, Dart, R<br/>
-      <b>Databases:</b> PostgreSQL, MySQL, SQL<br/>
-      <b>Web and Systems:</b> React, React Native, Node.js, Express.js, Astro<br/>
-      <b>Cloud and Tools:</b> AWS, Git, Postman, Android Studio, Visual Studio<br/>
+      <b>Education:</b> BSc (Hons) Software Engineering, Dual Award from Asia Pacific University (Malaysia), De Montfort University (UK)<br/><br/>
+      <b>Focus:</b> Database design, backend, frontend, cloud<br/><br/>
+      <b>Web and Systems:</b> React, React Native, Node.js, Express.js, Astro<br/><br/>
       <b>Practices:</b> SDLC, Agile, Software Architecture, Automated Testing
     </td>
   </tr>
