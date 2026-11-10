@@ -17,7 +17,7 @@
 
 <br/>
 
-<h2>Hey, I'm Shafa <img src="./assets/giphy.gif" width="60" valign="middle" alt="Hi" /></h2>
+<h2>Hey, I'm Shafa <img src="./assets/giph.gif" width="60" valign="middle" alt="Hi" /></h2>
 
 I'm a software engineer who enjoys building things from the ground up, from database schemas to backends and frontends. I care about software that's thoughtful and user focused, and I have a personal passion in coming up with creative UIs that feel natural to use.
 
