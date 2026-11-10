@@ -23,6 +23,8 @@ I'm a software engineer who enjoys building things from the ground up, from data
 
 I studied Software Engineering through a dual award from Asia Pacific University (Malaysia) and De Montfort University (UK), and I'm always learning something new along the way.
 
+You can find my portfolio here: https://aishshafa.github.io
+
 <br/>
 
 
